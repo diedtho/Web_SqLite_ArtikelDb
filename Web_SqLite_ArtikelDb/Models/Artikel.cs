@@ -13,6 +13,6 @@ namespace Web_SqLite_ArtikelDb.Models
 
         public double preis { get; set; }
 
-        public bool? vorhanden { get; set; }
+        public bool vorhanden { get; set; }
     }
 }

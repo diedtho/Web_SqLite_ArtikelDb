@@ -18,14 +18,19 @@
 <body>
     <form action="/home/AddArticle" method="post">
         <h1>Artikel hinzufügen</h1>
-        @*<input type="text" asp-for="@Model.artikelId" />
-        <label asp-for="@Model.artikelId">Artikel-Id</label>
         <input type="text" asp-for="@Model.bezeichnung" />
         <label asp-for="@Model.bezeichnung">Bezeichnung</label>
-        <input type="checkbox" asp-for="@Model.vorhanden" value="true"/>
+        <br />
+        <input type="text" asp-for="@Model.preis" />
+        <label asp-for="@Model.preis">Preis [€]</label>
+        <br />
+        <input type="checkbox" asp-for="@Model.vorhanden" />
+        <label asp-for="@Model.vorhanden">Bestand im Lager</label>
+        <br />
         <button>Speichern</button>
-        <button type="reset">Reset</button>*@
+        <button type="reset">Reset</button>
     </form>
+    <a href="/home/index">Zurück</a>
 
 </body>
 </html>
