@@ -1,0 +1,31 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@using Web_SqLite_ArtikelDb.Models
+@model Artikel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddArticle</title>
+
+</head>
+<body>
+    <form action="/home/AddArticle" method="post">
+        <h1>Artikel hinzufügen</h1>
+        @*<input type="text" asp-for="@Model.artikelId" />
+        <label asp-for="@Model.artikelId">Artikel-Id</label>
+        <input type="text" asp-for="@Model.bezeichnung" />
+        <label asp-for="@Model.bezeichnung">Bezeichnung</label>
+        <input type="checkbox" asp-for="@Model.vorhanden" value="true"/>
+        <button>Speichern</button>
+        <button type="reset">Reset</button>*@
+    </form>
+
+</body>
+</html>
