@@ -54,52 +54,19 @@ namespace Web_SqLite_ArtikelDb.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(Artikel artikelNeu)
+        public IActionResult Index(List<Artikel> artikelListe)
         {
-            // Artikelliste
-            List<Artikel> artikelListe = new List<Artikel>();
-
-            // 1. Connection-String
-            string connStr = "Data Source =./ Artikel.db; ";
-
-            // 2. SQL-Connection
-            SqliteConnection conn = new SqliteConnection(connStr);
-
-            // 3. SQL-Command
-            SqliteCommand cmdSql = new SqliteCommand("Select * From Artikel;", conn);
-
-            // 4. Verbindung öffnen
-            conn.Open();
-
-            // 5. Ergebnis des Selects lesen
-            var dr = cmdSql.ExecuteReader();
-            while (dr.Read())
-            {
-                Artikel artikel = new Artikel
-                {
-                    artikelId = (int)(long)dr[0],
-                    bezeichnung = dr[1].ToString(),
-                    preis = (double)dr[2],
-                    vorhanden = true
-                };
-                artikelListe.Add(artikel);
-
-            }
-
-            // 6. Verbindung schließen
-            conn.Close();
-
             return View(artikelListe);
         }
 
         [HttpGet]
         public IActionResult AddArticle()
         {
-            return View();
+            return View(new AddArticle { vorhanden = false });
         }
 
         [HttpPost]
-        public IActionResult AddArticle(Artikel artikel)
+        public IActionResult AddArticle(AddArticle addArticle)
         {
             // 1. Connection-String
             string connStr = "Data Source =./ Artikel.db; ";
@@ -108,10 +75,10 @@ namespace Web_SqLite_ArtikelDb.Controllers
             SqliteConnection conn = new SqliteConnection(connStr);
 
             // 3. SQL-Command (insert-Statement)
-            int vorhanden = artikel.vorhanden == true ? 1 : 0;
-            double preis = artikel.preis;
+            int vorhanden = addArticle.vorhanden == true ? 1 : 0;
+            double preis = addArticle.preis;
             SqliteCommand cmdSqlInsert = new SqliteCommand($"INSERT INTO Artikel ('Bezeichnung','Preis','vorhanden')" +
-                $" VALUES('{artikel.bezeichnung}','{preis}','{vorhanden}');", conn);
+                $" VALUES('{addArticle.bezeichnung}','{preis}','{vorhanden}');", conn);
 
             // 4. Verbindung öffnen
             conn.Open();
@@ -128,13 +95,7 @@ namespace Web_SqLite_ArtikelDb.Controllers
         }
 
         [HttpGet]
-        public IActionResult DeleteArticle()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult DeleteArticle(int artikelId)
+        public IActionResult DeleteArticle(int id)
         {
             // 1. Connection-String
             string connStr = "Data Source =./ Artikel.db; ";
@@ -144,19 +105,53 @@ namespace Web_SqLite_ArtikelDb.Controllers
 
             // 3. SQL-Command (delete-Statement)  
 
-            SqliteCommand cmdSqlInsert = new SqliteCommand($"DELETE FROM Artikel WHERE AId = {artikelId};");
+            SqliteCommand cmdSqlSelect = new SqliteCommand($"SELECT * FROM Artikel WHERE AId = {id};", conn);
+
+            // 4. Verbindung öffnen
+            conn.Open();
+
+            // 5. Ergebnis des Selects lesen (nur eine Zeile)
+            var dr = cmdSqlSelect.ExecuteReader();
+            dr.Read();
+            Article delArticle = new Article
+            {
+                artikelId = (int)(long)dr[0],
+                bezeichnung = dr[1].ToString(),
+                preis = (double)dr[2],
+                vorhanden = true
+            };
+
+
+            // 6. Verbindung schließen
+            conn.Close();
+
+            return View(delArticle);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteArticle(Article delArticle)
+        {
+            // 1. Connection-String
+            string connStr = "Data Source =./ Artikel.db; ";
+
+            // 2. SQL-Connection
+            SqliteConnection conn = new SqliteConnection(connStr);
+
+            // 3. SQL-Command (delete-Statement)  
+
+            SqliteCommand cmdSqlDelete = new SqliteCommand($"DELETE FROM Artikel WHERE AId = {delArticle.artikelId};", conn);
 
             // 4. Verbindung öffnen
             conn.Open();
 
             // 5. Ergebnis des Selects lesen
-            int ok = cmdSqlInsert.ExecuteNonQuery();
-            if (ok != 1) { }
+            int ok = cmdSqlDelete.ExecuteNonQuery();
+            if (ok != 0) { }
 
             // 6. Verbindung schließen
             conn.Close();
 
-            return View();
+            return RedirectToAction("Index");
         }
 
     }
