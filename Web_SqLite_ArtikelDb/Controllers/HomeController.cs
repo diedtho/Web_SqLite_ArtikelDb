@@ -10,7 +10,9 @@ namespace Web_SqLite_ArtikelDb.Controllers
 {
     public class HomeController : Controller
     {
-        
+        // Konstruktor (für mehrere Zugriffe)
+        public HomeController() { }
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -35,10 +37,11 @@ namespace Web_SqLite_ArtikelDb.Controllers
             {
                 Artikel artikel = new Artikel
                 {
-                    artikelId = (int)(long)dr[0],
+                    artikelId = (int)(long)dr[0],  // "int" = 32bit, "long" = 64bit
                     bezeichnung = dr[1].ToString(),
                     preis = (double)dr[2],
-                    vorhanden = true
+                    //vorhanden = true
+                    vorhanden = dr["vorhanden"] == DBNull.Value ? null : (int)(long)dr["vorhanden"] == 1 ? true : false
                 };
                 artikelListe.Add(artikel);
 
@@ -116,12 +119,45 @@ namespace Web_SqLite_ArtikelDb.Controllers
             // 5. Ergebnis des Selects lesen
             int ok = cmdSqlInsert.ExecuteNonQuery();
             if (ok != 1) { }
-           
+
             // 6. Verbindung schließen
             conn.Close();
 
-            return RedirectToPage("./index");
-        
+            return RedirectToAction("Index");
+
         }
+
+        [HttpGet]
+        public IActionResult DeleteArticle()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult DeleteArticle(int artikelId)
+        {
+            // 1. Connection-String
+            string connStr = "Data Source =./ Artikel.db; ";
+
+            // 2. SQL-Connection
+            SqliteConnection conn = new SqliteConnection(connStr);
+
+            // 3. SQL-Command (delete-Statement)  
+
+            SqliteCommand cmdSqlInsert = new SqliteCommand($"DELETE FROM Artikel WHERE AId = {artikelId};");
+
+            // 4. Verbindung öffnen
+            conn.Open();
+
+            // 5. Ergebnis des Selects lesen
+            int ok = cmdSqlInsert.ExecuteNonQuery();
+            if (ok != 1) { }
+
+            // 6. Verbindung schließen
+            conn.Close();
+
+            return View();
+        }
+
     }
 }
