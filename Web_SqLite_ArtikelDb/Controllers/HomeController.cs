@@ -147,9 +147,29 @@ namespace Web_SqLite_ArtikelDb.Controllers
         }
 
         [HttpGet]
-        public IActionResult EditArticle()
+        public IActionResult EditArticle(int id)
         {
-            return View(new AddEditArticle { vorhanden = false });
+            // 3. SQL-Command (delete-Statement)  
+
+            SqliteCommand cmdSqlSelect = new SqliteCommand($"SELECT * FROM Artikel WHERE AId = {id};", conn);
+
+            // 4. Verbindung öffnen
+            conn.Open();
+
+            // 5. Ergebnis des Selects lesen (nur eine Zeile)
+            var dr = cmdSqlSelect.ExecuteReader();
+            dr.Read();
+            AddEditArticle editArticle = new AddEditArticle
+            {
+                artikelId = id,
+                bezeichnung = dr[1].ToString(),
+                preis = (double)dr[2],
+                vorhanden = dr["vorhanden"] == DBNull.Value ? null : (int)(long)dr["vorhanden"] == 1 ? true : false
+            };
+
+            // 6. Verbindung schließen
+            conn.Close();
+            return View(editArticle);
         }
 
         [HttpPost]
@@ -157,17 +177,16 @@ namespace Web_SqLite_ArtikelDb.Controllers
         {
 
             // 3. SQL-Command (insert-Statement)
-            int vorhanden = editArticle.vorhanden == true ? 1 : 0;
+            int vorhanden = editArticle.vorhanden == true ? 1 : 0;            
             double preis = editArticle.preis;
-            SqliteCommand cmdSqlInsert = new SqliteCommand($"INSERT INTO Artikel ('Bezeichnung','Preis','vorhanden')" +
-                $" VALUES('{editArticle.bezeichnung}','{preis}','{vorhanden}');", conn);
+            SqliteCommand cmdSqlUpdate = new SqliteCommand($"Update Artikel SET Bezeichnung='{editArticle.artikelId}', Preis='{editArticle.preis}', vorhanden='{vorhanden}' WHERE AId={editArticle.artikelId};", conn);
 
             // 4. Verbindung öffnen
             conn.Open();
 
             // 5. Ergebnis des Selects lesen
-            int ok = cmdSqlInsert.ExecuteNonQuery();
-            if (ok != 1) { }
+            int ok = cmdSqlUpdate.ExecuteNonQuery();
+            if (ok != 1) { return View(editArticle); }
 
             // 6. Verbindung schließen
             conn.Close();

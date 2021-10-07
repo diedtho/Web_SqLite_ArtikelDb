@@ -17,6 +17,9 @@
 <body>
     <form action="/home/EditArticle" method="post">
         <h1>Artikel ändern</h1>
+        <input type="text" asp-for="@Model.artikelId" value="@Model.artikelId" />
+        <label asp-for="@Model.artikelId">Bezeichnung</label>
+        <br />
         <input type="text" asp-for="@Model.bezeichnung" value="@Model.bezeichnung" />
         <label asp-for="@Model.bezeichnung">Bezeichnung</label>
         <br />
