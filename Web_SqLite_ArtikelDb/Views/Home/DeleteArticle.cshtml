@@ -1,5 +1,5 @@
 ﻿@using Web_SqLite_ArtikelDb.Models
-@model Article
+@model DelArticle
 
 @{
     Layout = null;
@@ -15,7 +15,7 @@
 </head>
 <body>
     <h1>Zum Löschen ausgewählter Artikel</h1>
-    <form method="post" action="/Home/DeleteArticle">
+    <form action="/Home/DeleteArticle" method="post">
         <table class="table table-hover">
             <thead>
                 <tr>

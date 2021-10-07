@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Web_SqLite_ArtikelDb.Models
 {
-    public class Article
+    public class DelArticle
     {
         public int artikelId { get; set; }
 

@@ -10,20 +10,27 @@ namespace Web_SqLite_ArtikelDb.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly SqliteConnection conn;
+
         // Konstruktor (für mehrere Zugriffe)
-        public HomeController() { }
+        public HomeController()
+        {
+
+            // 1. Connection-String
+            string connStr = "Data Source =./ Artikel.db; ";
+
+            // 2. SQL-Connection
+            conn = new SqliteConnection(connStr);
+
+        }
+
 
         [HttpGet]
         public IActionResult Index()
         {
             // Artikelliste
             List<Artikel> artikelListe = new List<Artikel>();
-
-            // 1. Connection-String
-            string connStr = "Data Source =./ Artikel.db; ";
-
-            // 2. SQL-Connection
-            SqliteConnection conn = new SqliteConnection(connStr);
+           
 
             // 3. SQL-Command
             SqliteCommand cmdSql = new SqliteCommand("Select * From Artikel;", conn);
@@ -53,12 +60,6 @@ namespace Web_SqLite_ArtikelDb.Controllers
             return View(artikelListe);
         }
 
-        [HttpPost]
-        public IActionResult Index(List<Artikel> artikelListe)
-        {
-            return View(artikelListe);
-        }
-
         [HttpGet]
         public IActionResult AddArticle()
         {
@@ -66,13 +67,15 @@ namespace Web_SqLite_ArtikelDb.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddArticle(AddArticle addArticle)
+        public IActionResult Index(List<Artikel> artikelListe)
         {
-            // 1. Connection-String
-            string connStr = "Data Source =./ Artikel.db; ";
+            return View(artikelListe);
+        }
 
-            // 2. SQL-Connection
-            SqliteConnection conn = new SqliteConnection(connStr);
+
+        [HttpPost]
+        public IActionResult AddArticle(AddArticle addArticle)
+        {           
 
             // 3. SQL-Command (insert-Statement)
             int vorhanden = addArticle.vorhanden == true ? 1 : 0;
@@ -97,12 +100,6 @@ namespace Web_SqLite_ArtikelDb.Controllers
         [HttpGet]
         public IActionResult DeleteArticle(int id)
         {
-            // 1. Connection-String
-            string connStr = "Data Source =./ Artikel.db; ";
-
-            // 2. SQL-Connection
-            SqliteConnection conn = new SqliteConnection(connStr);
-
             // 3. SQL-Command (delete-Statement)  
 
             SqliteCommand cmdSqlSelect = new SqliteCommand($"SELECT * FROM Artikel WHERE AId = {id};", conn);
@@ -113,7 +110,7 @@ namespace Web_SqLite_ArtikelDb.Controllers
             // 5. Ergebnis des Selects lesen (nur eine Zeile)
             var dr = cmdSqlSelect.ExecuteReader();
             dr.Read();
-            Article delArticle = new Article
+            DelArticle delArticle = new DelArticle
             {
                 artikelId = (int)(long)dr[0],
                 bezeichnung = dr[1].ToString(),
@@ -129,17 +126,11 @@ namespace Web_SqLite_ArtikelDb.Controllers
         }
 
         [HttpPost]
-        public IActionResult DeleteArticle(Article delArticle)
-        {
-            // 1. Connection-String
-            string connStr = "Data Source =./ Artikel.db; ";
-
-            // 2. SQL-Connection
-            SqliteConnection conn = new SqliteConnection(connStr);
-
+        public IActionResult DeleteArticle(DelArticle delArt)
+        {            
             // 3. SQL-Command (delete-Statement)  
 
-            SqliteCommand cmdSqlDelete = new SqliteCommand($"DELETE FROM Artikel WHERE AId = {delArticle.artikelId};", conn);
+            SqliteCommand cmdSqlDelete = new SqliteCommand($"DELETE FROM Artikel WHERE AId = {delArt.artikelId};", conn);
 
             // 4. Verbindung öffnen
             conn.Open();
