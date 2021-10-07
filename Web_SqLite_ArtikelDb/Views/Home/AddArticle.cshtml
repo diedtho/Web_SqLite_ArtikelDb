@@ -1,7 +1,7 @@
 ﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @using Web_SqLite_ArtikelDb.Models
-@model AddEditArticle
+@model Artikel
 
 @{
     Layout = null;
@@ -18,13 +18,13 @@
 <body>
     <form action="/home/AddArticle" method="post">
         <h1>Artikel hinzufügen</h1>
-        <input type="text" asp-for="@Model.bezeichnung" />
+        <input type="text" asp-for="@Model.bezeichnung" required/>
         <label asp-for="@Model.bezeichnung">Bezeichnung</label>
         <br />
-        <input type="text" asp-for="@Model.preis" />
+        <input type="text" asp-for="@Model.preis" required/>
         <label asp-for="@Model.preis">Preis [€]</label>
         <br />
-        <input type="checkbox" asp-for="@Model.vorhanden" />
+        <input type="checkbox" asp-for="@Model.vorhanden" required/>
         <label asp-for="@Model.vorhanden">Bestand im Lager</label>
         <br />
         <button>Speichern</button>

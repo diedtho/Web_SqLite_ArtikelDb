@@ -24,7 +24,7 @@
                 <th scope="col">ArtId</th>
                 <th scope="col">Bezeichnung</th>
                 <th scope="col">Preis [€]</th>
-                <th scope="col">Bestand [Stk.]</th>
+                <th scope="col">Vorhanden</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
             </tr>
@@ -36,7 +36,7 @@
                 <td>@art.artikelId</td>
                 <td>@art.bezeichnung</td>
                 <td>@art.preis</td>
-                <td>@(art.vorhanden == null ? "unbekannt" : art.vorhanden)</td>
+                <td>@art.vorhanden</td>
                 <td><a href="/home/DeleteArticle?id=@art.artikelId"><span class="material-icons-outlined"/>delete</a></td>
                 <td><a href="/home/EditArticle?id=@art.artikelId"><span class="material-icons-outlined">edit</span></a></td>
             </tr>

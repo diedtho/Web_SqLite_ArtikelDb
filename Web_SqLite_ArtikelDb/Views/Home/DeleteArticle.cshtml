@@ -1,5 +1,7 @@
-﻿@using Web_SqLite_ArtikelDb.Models
-@model DelArticle
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Web_SqLite_ArtikelDb.Models.Artikel
+
+
 
 @{
     Layout = null;
@@ -15,29 +17,38 @@
 </head>
 <body>
     <h1>Zum Löschen ausgewählter Artikel</h1>
-    <form action="/Home/DeleteArticle" method="post">
+    <form asp-action="DeleteArticle" method="post">
         <table class="table table-hover">
             <thead>
                 <tr>
                     <th scope="col">ArtId</th>
                     <th scope="col">Bezeichnung</th>
                     <th scope="col">Preis [€]</th>
-                    <th scope="col">Bestand [Stk.]</th>
+                    <th scope="col">Vorhanden</th>
                     <th>&nbsp;</th>
                     <th>&nbsp;</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>@Model.artikelId</td>
-                    <td>@Model.bezeichnung</td>
-                    <td>@Model.preis</td>
-                    <td>@Model.vorhanden</td>
+                    <td>
+                        <input type="text" asp-for="@Model.artikelId" value="@Model.artikelId" readonly />
+                    </td>
+                    <td>
+                        <input type="text" asp-for="@Model.bezeichnung" value="@Model.bezeichnung" readonly />
+                    </td>
+                    <td>
+                        <input type="text" asp-for="@Model.preis" value="@Model.preis" readonly />
+                    </td>
+                    <td>
+                        <input type="checkbox" asp-for="@Model.vorhanden" value="@Model.vorhanden" readonly />
+                    </td>
                 </tr>
             </tbody>
         </table>
         <button>Artikel löschen</button>
         <button type="reset">Reset</button>
     </form>
+    <a href="/home/index">Zurück</a>
 </body>
 </html>

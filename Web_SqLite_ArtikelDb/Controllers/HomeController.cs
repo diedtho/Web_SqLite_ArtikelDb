@@ -47,8 +47,9 @@ namespace Web_SqLite_ArtikelDb.Controllers
                     artikelId = (int)(long)dr[0],  // "int" = 32bit, "long" = 64bit
                     bezeichnung = dr[1].ToString(),
                     preis = (double)dr[2],
-                    //vorhanden = true
-                    vorhanden = dr["vorhanden"] == DBNull.Value ? null : (int)(long)dr["vorhanden"] == 1 ? true : false
+                    vorhanden = (int)(long)dr[3] == 1
+                    // Verschachtelter Ternärer Operator
+                    // vorhanden = dr["vorhanden"] == DBNull.Value ? null : (int)(long)dr["vorhanden"] == 1 ? true : false
                 };
                 artikelListe.Add(artikel);
 
@@ -71,11 +72,11 @@ namespace Web_SqLite_ArtikelDb.Controllers
         [HttpGet]
         public IActionResult AddArticle()
         {
-            return View(new AddEditArticle { vorhanden = false });
+            return View(new Artikel { vorhanden = false });
         }
 
         [HttpPost]
-        public IActionResult AddArticle(AddEditArticle addArticle)
+        public IActionResult AddArticle(Artikel addArticle)
         {           
 
             // 3. SQL-Command (insert-Statement)
@@ -111,12 +112,12 @@ namespace Web_SqLite_ArtikelDb.Controllers
             // 5. Ergebnis des Selects lesen (nur eine Zeile)
             var dr = cmdSqlSelect.ExecuteReader();
             dr.Read();
-            DelArticle delArticle = new DelArticle
+            Artikel delArticle = new Artikel
             {
                 artikelId = (int)(long)dr[0],
                 bezeichnung = dr[1].ToString(),
                 preis = (double)dr[2],
-                vorhanden = true
+                vorhanden = (int)(long)dr[3] == 1
             };
 
 
@@ -127,11 +128,11 @@ namespace Web_SqLite_ArtikelDb.Controllers
         }
 
         [HttpPost]
-        public IActionResult DeleteArticle(DelArticle delArt)
+        public IActionResult DeleteArticle(Artikel delArticle)
         {            
             // 3. SQL-Command (delete-Statement)  
 
-            SqliteCommand cmdSqlDelete = new SqliteCommand($"DELETE FROM Artikel WHERE AId = {delArt.artikelId};", conn);
+            SqliteCommand cmdSqlDelete = new SqliteCommand($"DELETE FROM Artikel WHERE AId = {delArticle.artikelId};", conn);
 
             // 4. Verbindung öffnen
             conn.Open();
@@ -159,12 +160,12 @@ namespace Web_SqLite_ArtikelDb.Controllers
             // 5. Ergebnis des Selects lesen (nur eine Zeile)
             var dr = cmdSqlSelect.ExecuteReader();
             dr.Read();
-            AddEditArticle editArticle = new AddEditArticle
+            Artikel editArticle = new Artikel
             {
                 artikelId = id,
                 bezeichnung = dr[1].ToString(),
                 preis = (double)dr[2],
-                vorhanden = dr["vorhanden"] == DBNull.Value ? null : (int)(long)dr["vorhanden"] == 1 ? true : false
+                vorhanden = (int)(long)dr[3] == 1
             };
 
             // 6. Verbindung schließen
@@ -173,13 +174,13 @@ namespace Web_SqLite_ArtikelDb.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditArticle(AddEditArticle editArticle)
+        public IActionResult EditArticle(Artikel editArticle)
         {
 
             // 3. SQL-Command (insert-Statement)
             int vorhanden = editArticle.vorhanden == true ? 1 : 0;            
             double preis = editArticle.preis;
-            SqliteCommand cmdSqlUpdate = new SqliteCommand($"Update Artikel SET Bezeichnung='{editArticle.artikelId}', Preis='{editArticle.preis}', vorhanden='{vorhanden}' WHERE AId={editArticle.artikelId};", conn);
+            SqliteCommand cmdSqlUpdate = new SqliteCommand($"Update Artikel SET Bezeichnung='{editArticle.bezeichnung}', Preis='{editArticle.preis}', vorhanden='{vorhanden}' WHERE AId={editArticle.artikelId};", conn);
 
             // 4. Verbindung öffnen
             conn.Open();
