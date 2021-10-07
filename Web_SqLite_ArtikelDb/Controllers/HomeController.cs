@@ -60,11 +60,7 @@ namespace Web_SqLite_ArtikelDb.Controllers
             return View(artikelListe);
         }
 
-        [HttpGet]
-        public IActionResult AddArticle()
-        {
-            return View(new AddArticle { vorhanden = false });
-        }
+        
 
         [HttpPost]
         public IActionResult Index(List<Artikel> artikelListe)
@@ -72,9 +68,14 @@ namespace Web_SqLite_ArtikelDb.Controllers
             return View(artikelListe);
         }
 
+        [HttpGet]
+        public IActionResult AddArticle()
+        {
+            return View(new AddEditArticle { vorhanden = false });
+        }
 
         [HttpPost]
-        public IActionResult AddArticle(AddArticle addArticle)
+        public IActionResult AddArticle(AddEditArticle addArticle)
         {           
 
             // 3. SQL-Command (insert-Statement)
@@ -143,6 +144,36 @@ namespace Web_SqLite_ArtikelDb.Controllers
             conn.Close();
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult EditArticle()
+        {
+            return View(new AddEditArticle { vorhanden = false });
+        }
+
+        [HttpPost]
+        public IActionResult EditArticle(AddEditArticle editArticle)
+        {
+
+            // 3. SQL-Command (insert-Statement)
+            int vorhanden = editArticle.vorhanden == true ? 1 : 0;
+            double preis = editArticle.preis;
+            SqliteCommand cmdSqlInsert = new SqliteCommand($"INSERT INTO Artikel ('Bezeichnung','Preis','vorhanden')" +
+                $" VALUES('{editArticle.bezeichnung}','{preis}','{vorhanden}');", conn);
+
+            // 4. Verbindung öffnen
+            conn.Open();
+
+            // 5. Ergebnis des Selects lesen
+            int ok = cmdSqlInsert.ExecuteNonQuery();
+            if (ok != 1) { }
+
+            // 6. Verbindung schließen
+            conn.Close();
+
+            return RedirectToAction("Index");
+
         }
 
     }
